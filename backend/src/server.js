@@ -6,6 +6,7 @@ import debuggingRoutes from "./routes/debuggingRoutes.js";
 import serverRoutes from "./routes/serverRoutes.js";
 import validationRoutes from "./routes/validationRoutes.js";
 import historyRoutes from "./routes/historyRoutes.js";
+import reportRoutes from "./routes/reportRoutes.js";
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use("/api/servers", serverRoutes);
 app.use("/api", debuggingRoutes);
 app.use("/api", validationRoutes);
 app.use("/api", historyRoutes);
+app.use("/api", reportRoutes);
 
 /* ---------------------------------------------------------
    Health Check
