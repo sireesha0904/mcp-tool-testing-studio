@@ -5,6 +5,7 @@ import ToolTestRunner from "./components/ToolTestRunner";
 import DebugConsole from "./components/DebugConsole";
 import Validation from "./components/Validation";
 import History from "./components/History";
+import Reports from "./components/Reports";
 
 const API_BASE = "http://localhost:5000/api";
 
@@ -777,6 +778,10 @@ export default function App() {
 
     if (activePage === "history") {
       return <History />;
+    }
+
+    if (activePage === "reports") {
+      return <Reports />;
     }
 
     return (
