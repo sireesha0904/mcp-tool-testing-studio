@@ -1,33 +1,48 @@
 import express from "express";
 import cors from "cors";
+
 import toolRoutes from "./routes/toolRoutes.js";
 import debuggingRoutes from "./routes/debuggingRoutes.js";
-
 import serverRoutes from "./routes/serverRoutes.js";
- 
+import validationRoutes from "./routes/validationRoutes.js";
+import historyRoutes from "./routes/historyRoutes.js";
+
 const app = express();
- 
+
 const PORT = 5000;
- 
-// Middleware
+
+/* ---------------------------------------------------------
+   Middleware
+--------------------------------------------------------- */
+
 app.use(cors());
 app.use(express.json());
+
+/* ---------------------------------------------------------
+   API Routes
+--------------------------------------------------------- */
+
 app.use("/api", toolRoutes);
 app.use("/api/servers", serverRoutes);
 app.use("/api", debuggingRoutes);
- 
-// Health check
+app.use("/api", validationRoutes);
+app.use("/api", historyRoutes);
+
+/* ---------------------------------------------------------
+   Health Check
+--------------------------------------------------------- */
+
 app.get("/", (req, res) => {
   res.json({
     success: true,
-    message: "MCP Tool Testing Studio Backend is running"
+    message: "MCP Tool Testing Studio Backend is running",
   });
 });
- 
-// Server APIs
-app.use("/api/servers", serverRoutes);
- 
-// Start server
+
+/* ---------------------------------------------------------
+   Start Server
+--------------------------------------------------------- */
+
 app.listen(PORT, () => {
   console.log("=================================");
   console.log("MCP TOOL TESTING STUDIO BACKEND");
@@ -35,4 +50,3 @@ app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
   console.log("API: http://localhost:5000/api/servers");
 });
- 
