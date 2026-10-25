@@ -1,7 +1,8 @@
 import express from "express";
 import cors from "cors";
-import toolRoutes from "./routes/toolRoutes.js"
- 
+import toolRoutes from "./routes/toolRoutes.js";
+import debuggingRoutes from "./routes/debuggingRoutes.js";
+
 import serverRoutes from "./routes/serverRoutes.js";
  
 const app = express();
@@ -13,6 +14,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/api", toolRoutes);
 app.use("/api/servers", serverRoutes);
+app.use("/api", debuggingRoutes);
  
 // Health check
 app.get("/", (req, res) => {
