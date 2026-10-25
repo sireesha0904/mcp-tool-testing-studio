@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import "./App.css";
+
 import ToolTestRunner from "./components/ToolTestRunner";
+import DebugConsole from "./components/DebugConsole";
+import Validation from "./components/Validation";
+import History from "./components/History";
 
 const API_BASE = "http://localhost:5000/api";
 
@@ -9,13 +13,13 @@ async function apiRequest(url, options = {}) {
     ...options,
     headers: {
       "Content-Type": "application/json",
-      ...(options.headers || {})
-    }
+      ...(options.headers || {}),
+    },
   });
 
   const text = await response.text();
 
-  let data = {};
+  let data;
 
   try {
     data = text ? JSON.parse(text) : {};
@@ -27,7 +31,7 @@ async function apiRequest(url, options = {}) {
     throw new Error(
       data?.message ||
         data?.error ||
-        `Request failed with status ${response.status}`
+        `Request failed with status ${response.status}`,
     );
   }
 
@@ -52,7 +56,7 @@ function Icon({ name }) {
     tool: "⚙",
     arrow: "→",
     check: "✓",
-    close: "×"
+    close: "×",
   };
 
   return <span className="app-icon">{icons[name] || "•"}</span>;
@@ -73,9 +77,9 @@ function Sidebar({ activePage, onNavigate }) {
         ["validation", "Validation"],
         ["history", "History"],
         ["reports", "Reports"],
-        ["agents", "Agents"]
-      ]
-    }
+        ["agents", "Agents"],
+      ],
+    },
   ];
 
   return (
@@ -98,9 +102,7 @@ function Sidebar({ activePage, onNavigate }) {
               <button
                 key={id}
                 type="button"
-                className={`nav-item ${
-                  activePage === id ? "active" : ""
-                }`}
+                className={`nav-item ${activePage === id ? "active" : ""}`}
                 onClick={() => onNavigate(id)}
               >
                 <Icon name={id} />
@@ -156,11 +158,10 @@ function Dashboard({
   loading,
   connected,
   onNavigate,
-  onRefresh
+  onRefresh,
 }) {
   const connectedServers = servers.filter(
-    (server) =>
-      String(server.status || "").toLowerCase() === "connected"
+    (server) => String(server.status || "").toLowerCase() === "connected",
   ).length;
 
   return (
@@ -180,9 +181,8 @@ function Dashboard({
             <h2>Discover. Test. Validate.</h2>
 
             <p>
-              A centralized workspace for discovering MCP tools,
-              executing real tests and evaluating tool quality for
-              agent usage.
+              A centralized workspace for discovering MCP tools, executing real
+              tests and evaluating tool quality for agent usage.
             </p>
 
             <button
@@ -202,7 +202,9 @@ function Dashboard({
             </div>
 
             <div className="hero-status-line">
-              <span className={connected ? "status-dot" : "status-dot offline"} />
+              <span
+                className={connected ? "status-dot" : "status-dot offline"}
+              />
               MCP backend connection
             </div>
           </div>
@@ -269,9 +271,8 @@ function Dashboard({
 
                     <div className="server-main">
                       <strong>{server.name || "Unnamed Server"}</strong>
-                      <span>
-                        {server.transport || "Unknown transport"}
-                      </span>
+
+                      <span>{server.transport || "Unknown transport"}</span>
                     </div>
 
                     <div
@@ -323,6 +324,7 @@ function Dashboard({
 
                     <div className="tool-main">
                       <strong>{tool.name}</strong>
+
                       <span>
                         {tool.description || "No description available"}
                       </span>
@@ -354,7 +356,7 @@ function Dashboard({
               ["01", "Discover", "Read tools and schemas from MCP servers."],
               ["02", "Test", "Execute tools with real input values."],
               ["03", "Debug", "Identify input and execution problems."],
-              ["04", "Validate", "Evaluate tool quality and readiness."]
+              ["04", "Validate", "Evaluate tool quality and readiness."],
             ].map(([number, title, text]) => (
               <div className="workflow-step" key={number}>
                 <div className="workflow-number">{number}</div>
@@ -407,10 +409,12 @@ function ServersPage({ servers, loading, connected, onRefresh }) {
         <section className="section-heading">
           <div>
             <div className="eyebrow">SERVER MANAGEMENT</div>
+
             <h2>MCP Servers</h2>
+
             <p>
-              Connection information for MCP servers available to
-              this workspace.
+              Connection information for MCP servers available to this
+              workspace.
             </p>
           </div>
 
@@ -450,9 +454,7 @@ function ServersPage({ servers, loading, connected, onRefresh }) {
                           </div>
 
                           <div>
-                            <strong>
-                              {server.name || "Unnamed Server"}
-                            </strong>
+                            <strong>{server.name || "Unnamed Server"}</strong>
 
                             <span>
                               {server.authentication_type ||
@@ -478,9 +480,7 @@ function ServersPage({ servers, loading, connected, onRefresh }) {
                         </div>
                       </td>
 
-                      <td className="muted-cell">
-                        {server.url || "—"}
-                      </td>
+                      <td className="muted-cell">{server.url || "—"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -508,10 +508,12 @@ function ToolsPage({ tools, loading, connected, onNavigate }) {
         <section className="section-heading">
           <div>
             <div className="eyebrow">TOOL DISCOVERY</div>
+
             <h2>Discovered Tools</h2>
+
             <p>
-              Tool metadata and input schemas returned directly by
-              the MCP server.
+              Tool metadata and input schemas returned directly by the MCP
+              server.
             </p>
           </div>
         </section>
@@ -544,6 +546,7 @@ function ToolsPage({ tools, loading, connected, onNavigate }) {
 
                 <div className="tool-meta">
                   <span>Input schema</span>
+
                   <strong>
                     {tool.inputSchema ? "Available" : "Not available"}
                   </strong>
@@ -587,8 +590,8 @@ function PlaceholderPage({ title, connected }) {
           <h2>{title}</h2>
 
           <p>
-            This module is part of the planned MCP tool quality
-            workflow and will use the existing backend services.
+            This module is part of the planned MCP tool quality workflow and
+            will use the existing backend services.
           </p>
         </div>
       </main>
@@ -644,27 +647,25 @@ export default function App() {
 
     for (const server of serverList) {
       try {
-        const data = await apiRequest(
-          `${API_BASE}/servers/${server.id}/tools`
-        );
+        const data = await apiRequest(`${API_BASE}/servers/${server.id}/tools`);
 
         const serverTools = Array.isArray(data)
           ? data
           : Array.isArray(data?.tools)
-          ? data.tools
-          : [];
+            ? data.tools
+            : [];
 
         serverTools.forEach((tool) => {
           allTools.push({
             ...tool,
             serverId: server.id,
-            serverName: server.name
+            serverName: server.name,
           });
         });
       } catch (toolError) {
         console.error(
           `Could not discover tools for server ${server.id}`,
-          toolError
+          toolError,
         );
       }
     }
@@ -697,7 +698,11 @@ export default function App() {
   }, [loadServers, loadTools]);
 
   useEffect(() => {
-    loadWorkspace();
+    const timer = setTimeout(() => {
+      loadWorkspace();
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, [loadWorkspace]);
 
   const currentTitle = useMemo(() => {
@@ -710,7 +715,7 @@ export default function App() {
       validation: "Validation",
       history: "History",
       reports: "Reports",
-      agents: "Agents"
+      agents: "Agents",
     };
 
     return titles[activePage] || "MCP Studio";
@@ -762,20 +767,26 @@ export default function App() {
       );
     }
 
+    if (activePage === "debug") {
+      return <DebugConsole />;
+    }
+
+    if (activePage === "validation") {
+      return <Validation />;
+    }
+
+    if (activePage === "history") {
+      return <History />;
+    }
+
     return (
-      <PlaceholderPage
-        title={currentTitle}
-        connected={backendConnected}
-      />
+      <PlaceholderPage title={currentTitle} connected={backendConnected} />
     );
   }
 
   return (
     <div className="app-shell">
-      <Sidebar
-        activePage={activePage}
-        onNavigate={setActivePage}
-      />
+      <Sidebar activePage={activePage} onNavigate={setActivePage} />
 
       <div className="app-main">
         {error && (
