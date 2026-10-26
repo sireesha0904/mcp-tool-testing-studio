@@ -7,6 +7,8 @@ import serverRoutes from "./routes/serverRoutes.js";
 import validationRoutes from "./routes/validationRoutes.js";
 import historyRoutes from "./routes/historyRoutes.js";
 import reportRoutes from "./routes/reportRoutes.js";
+import "dotenv/config";
+import agentRoutes from "./routes/agentRoutes.js";
 
 const app = express();
 
@@ -29,6 +31,7 @@ app.use("/api", debuggingRoutes);
 app.use("/api", validationRoutes);
 app.use("/api", historyRoutes);
 app.use("/api", reportRoutes);
+app.use("/api", agentRoutes);
 
 /* ---------------------------------------------------------
    Health Check
